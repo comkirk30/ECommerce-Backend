@@ -10,7 +10,10 @@ Courtney Martin
 
 ## Demo
 
-Screencastify:
+Screencastify: Demo and Seed DB
+https://drive.google.com/file/d/1WFdXSB0fDOYzNryJ2ub8cdGZNUI4oNL8/view
+
+Screencastify: GET AND POST API
 
 ## Deployment
 
