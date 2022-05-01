@@ -2,98 +2,91 @@ const router = require("express").Router();
 const res = require("express/lib/response");
 const { Tag, Product, ProductTag } = require("../../models");
 
+router.get("/", (req, res) =>
+  Tag.findAll({
+    include: [
+      {
+        model: Product,
+        attributes: ["id", "product_name", "stock", "price", "category_id"],
+      },
+    ],
+  })
+
+    .then((dbTagData) => res.json(dbTagData))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    })
+);
 
 router
-  .get("/", (req, res) => 
-    Tag.findAll({
+  .get("/:id", (req, res) => {
+    Tag.findOne({
+      where: {
+        id: req.params.id,
+      },
       include: [
         {
           model: Product,
           attributes: ["id", "product_name", "stock", "price", "category_id"],
-        }
-      ]
-    })
-
-  .then((dbTagData) => res.json(dbTagData))
+        },
+      ],
+    }).then((dbTagData) => res.json(dbTagData));
+    if (!dbTagData) {
+      res.status(404).json({ message: "No tag contains this particular id" });
+      return;
+    }
+    res.json(dbTagData);
+  })
   .catch((err) => {
     console.log(err);
     res.status(500).json(err);
   });
 
-  
-router.get("/:id", (req, res) => {
-  
-  Tag.findOne({
-    where: {
-      id: req.params.id
-    },
-    include: [
-      {
-        model: Product,
-        attributes: ['id', 'product_name', 'stock', 'price', 'category_id'],
-      }
-    ]
-  })
-  .then((dbTagData) => res.json(dbTagData))
-    if (!dbTagData) {
-    res.status(404).json({ message: "No tag contains this particular id" });
-      return;
-    }
-      res.json(dbTagData);
-  })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
-    })
-
-
 router.post("/", (req, res) => {
-
   Tag.create({
-    tag_name: req.body.tag_name
+    tag_name: req.body.tag_name,
   })
-    .then(dbTagData => res.json(dbTagData))
-    .catch(err => {
+    .then((dbTagData) => res.json(dbTagData))
+    .catch((err) => {
       console.log(err);
       res.status(500).json(err);
-    })
-
+    });
 });
 
-router.put("/:id", (req, res) => {
-  Tag.update(req.body, {
-    where: {
-      id: req.params.id
-    }
-  })
-
-   .then(dbTagData => 
+router
+  .put("/:id", (req, res) => {
+    Tag.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
+    })
+    .then((dbTagData) => res.json(dbTagData));
     if (!dbTagData[0]) {
-      res.status(404).json({ message: "No tag contains this particular id" })
+      res.status(404).json({ message: "No tag contains this particular id" });
       return;
     }
     res.json(dbTagData);
   })
 
-  .catch(err => {
+  .catch((err) => {
     console.log(err);
     res.status(500).json(err);
   });
-);
 
 router.delete("/:id", (req, res) => {
   Tag.destroy({
     where: {
-      id: req.params.id
-    }
+      id: req.params.id,
+    },
   })
-    .then(dbTagData => {
+    .then((dbTagData) => {
       if (!dbTagData) {
-        res.status(404).json({ message: "No tag contains this particular id" })
+        res.status(404).json({ message: "No tag contains this particular id" });
         return;
       }
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       res.status(500).json(err);
     });
