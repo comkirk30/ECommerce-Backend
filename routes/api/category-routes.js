@@ -2,23 +2,21 @@ const router = require("express").Router();
 const res = require("express/lib/response");
 const { Category, Product } = require("../../models");
 
-router
-  .get("/", (req, res) => {
-    Category.findAll({
-      include: [
-        {
-          model: Product,
-          attributes: ["id", "product_name", "stock", "price", "category_id"],
-        },
-      ],
-    });
+router.get("/", (req, res) => {
+  Category.findAll({
+    include: [
+      {
+        model: Product,
+        attributes: ["id", "product_name", "stock", "price", "category_id"],
+      },
+    ],
   })
-
-  .then((dbCategoryData) => res.json(dbCategoryData))
-  .catch((err) => {
-    console.log(err);
-    res.status(500).json(err);
-  });
+    .then((dbCategoryData) => res.json(dbCategoryData))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
 
 router.get("/:id", (req, res) => {
   Category.findOne({
